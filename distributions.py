@@ -71,6 +71,16 @@ class BiVariateGaussian(Distributions):
         gauss = self.bivariate_normal(X_1, X_2, self.mu_1, self.sigma_1, self.mu_2, self.sigma_2, self.rho)
         return gauss
 
+    def conditional(self, X, Y_const, fix = "X2"):
+        if fix == "X1":
+            X = self.X_2
+        else:
+            X = self.X_1
+        factor = 1 / (np.sqrt(2*np.pi) * self.sigma_1 * np.sqrt(1-(self.rho**2)))
+        exponential_factor = ( -((1)/(2 * (self.sigma_1**2) * (1 - (self.rho**2)))) * ( X - ( self.mu_1 + self.sigma_1 * self.rho * ( (Y_const - self.mu_2)/(self.sigma_2) ) ) )**2 )
+        exponential = np.exp(exponential_factor)
+        return factor * exponential
+
 if __name__ == "__main__":
     POSTERIOR_TO_SIMULATE = "GAUSSIAN"
 
